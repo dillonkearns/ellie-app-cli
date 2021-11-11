@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "A command-line tool for quickly opening and running Elm ellie-app examples in elm-live and your editor.",
   "files": [
-    "index.js"
+    "index.js",
+    "cli.js"
   ],
+  "bin": {
+    "ellie-app": "cli.js"
+  },
   "main": "index.js",
   "scripts": {
     "test": "node index.js 648mvLrN3WTa1"
