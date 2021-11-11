@@ -1,0 +1,28 @@
+{
+  "name": "ellie-app-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js 648mvLrN3WTa1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dillonkearns/ellie-app-cli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dillonkearns/ellie-app-cli/issues"
+  },
+  "homepage": "https://github.com/dillonkearns/ellie-app-cli#readme",
+  "type": "module",
+  "dependencies": {
+    "commander": "^8.3.0",
+    "cross-spawn": "^7.0.3",
+    "cross-spawn-with-kill": "^1.0.0",
+    "node-fetch": "^3.1.0",
+    "open-editor": "^4.0.0"
+  }
+}
