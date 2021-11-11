@@ -4,6 +4,7 @@ import path from "node:path";
 import openEditor from "open-editor";
 import fetch from "node-fetch";
 import { Command } from "commander/esm.mjs";
+import { globby } from "globby";
 
 let elmLiveProcess;
 
@@ -56,17 +57,19 @@ async function getRepo(ellieId) {
 }
 
 async function run(ellieId) {
+  let elmModuleName;
   if (!fs.existsSync(ellieId)) {
     fs.mkdirSync(ellieId);
     process.chdir(ellieId);
     const json = await getRepo(ellieId);
-    await writeFiles(ellieId, json);
+    elmModuleName = await writeFiles(ellieId, json);
   } else {
     process.chdir(ellieId);
+    elmModuleName = await findEntrypoint();
   }
 
-  openEditor(["./", path.join("src", "Main.elm")]);
-  openElmLive();
+  openEditor(["./", path.join("src", `${elmModuleName.join("/")}.elm`)]);
+  openElmLive(elmModuleName);
 }
 
 async function writeFiles(ellieId, json) {
@@ -78,15 +81,18 @@ async function writeFiles(ellieId, json) {
   );
   const elmVersion = json.data.revision.elmVersion;
   const elmCode = json.data.revision.elmCode;
-
+  const elmModuleName = elmCode
+    .match(/module\s+(\S*)\s+exposing\s+\(.*\)/)[1]
+    .split(".");
   fs.writeFileSync("index.html", htmlCode);
   fs.mkdirSync("src");
-  fs.writeFileSync("src/Main.elm", elmCode);
+  fs.writeFileSync(`src/${elmModuleName.join("/")}.elm`, elmCode);
   fs.writeFileSync("elm.json", elmJson());
 
   fs.writeFileSync(".gitignore", gitignoreFile());
   await elmJsonInstall(packages);
   await setupRepo(ellieId);
+  return elmModuleName;
 }
 
 function elmJson() {
@@ -137,10 +143,16 @@ elm.js
 `;
 }
 
-function openElmLive() {
+function openElmLive(elmModuleName) {
   elmLiveProcess = spawn(
     "elm-live",
-    ["src/Main.elm", "--open", "--", "--output", "elm.js"],
+    [
+      `src/${elmModuleName.join("/")}.elm`,
+      "--open",
+      "--",
+      "--output",
+      "elm.js",
+    ],
     {
       stdio: "inherit",
     }
@@ -155,4 +167,13 @@ function spawnPromise(commandName, commandArgs) {
     spawnProcess.addListener("error", reject);
     spawnProcess.addListener("exit", resolve);
   });
+}
+
+async function findEntrypoint() {
+  const paths = await globby(["./src/**/*.elm"]);
+  if (paths.length !== 1) {
+    throw `Error: found more than one entrypoint: ${paths}`;
+  } else {
+    return paths[0].match(/\/([^\/]*)\.elm/)[1].split(".");
+  }
 }
