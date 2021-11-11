@@ -1,7 +1,10 @@
 {
-  "name": "ellie-app-cli",
+  "name": "ellie-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "A command-line tool for quickly opening and running Elm ellie-app examples in elm-live and your editor.",
+  "files": [
+    "index.js"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "node index.js 648mvLrN3WTa1"
@@ -11,12 +14,8 @@
     "url": "git+https://github.com/dillonkearns/ellie-app-cli.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dillonkearns/ellie-app-cli/issues"
-  },
-  "homepage": "https://github.com/dillonkearns/ellie-app-cli#readme",
+  "author": "Dillon Kearns",
+  "license": "BSD-3-Clause",
   "type": "module",
   "dependencies": {
     "commander": "^8.3.0",
